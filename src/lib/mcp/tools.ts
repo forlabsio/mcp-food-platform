@@ -230,3 +230,105 @@ export async function check_order_status(
     updated_at: typedOrder.updated_at,
   }
 }
+
+// --- cancel_order ---
+
+interface CancelOrderParams {
+  order_id: string
+  customer_phone: string
+}
+
+export async function cancel_order(params: CancelOrderParams): Promise<{ success: boolean; message: string }> {
+  const { order_id, customer_phone } = params
+
+  const { data: order, error } = await getSupabase()
+    .from('orders')
+    .select('*')
+    .eq('id', order_id)
+    .single()
+
+  if (error || !order) {
+    throw new Error(`주문을 찾을 수 없습니다: ${order_id}`)
+  }
+
+  const typedOrder = order as Order
+
+  if (typedOrder.customer_phone !== customer_phone) {
+    throw new Error('본인 주문만 취소할 수 있습니다. 전화번호가 일치하지 않습니다.')
+  }
+
+  if (['completed', 'cancelled'].includes(typedOrder.status)) {
+    throw new Error(`이미 ${typedOrder.status === 'completed' ? '완료' : '취소'}된 주문입니다.`)
+  }
+
+  if (typedOrder.status === 'preparing') {
+    throw new Error('조리가 시작된 주문은 취소할 수 없습니다. 식당에 직접 연락해주세요.')
+  }
+
+  const { error: updateError } = await getSupabase()
+    .from('orders')
+    .update({ status: 'cancelled' })
+    .eq('id', order_id)
+
+  if (updateError) {
+    throw new Error(`주문 취소 실패: ${updateError.message}`)
+  }
+
+  return { success: true, message: '주문이 취소되었습니다.' }
+}
+
+// --- list_my_orders ---
+
+interface ListMyOrdersParams {
+  customer_phone: string
+  restaurant_id?: string
+}
+
+export async function list_my_orders(params: ListMyOrdersParams): Promise<Order[]> {
+  const { customer_phone, restaurant_id } = params
+
+  let query = getSupabase()
+    .from('orders')
+    .select('*')
+    .eq('customer_phone', customer_phone)
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  if (restaurant_id) {
+    query = query.eq('restaurant_id', restaurant_id)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    throw new Error(`주문 목록 조회 실패: ${error.message}`)
+  }
+
+  return (data ?? []) as Order[]
+}
+
+// --- list_restaurants ---
+
+interface ListRestaurantsParams {
+  category?: string
+}
+
+export async function list_restaurants(params: ListRestaurantsParams): Promise<Restaurant[]> {
+  let query = getSupabase()
+    .from('restaurants')
+    .select('*')
+    .eq('is_active', true)
+    .order('name')
+
+  if (params.category) {
+    query = query.eq('category', params.category)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    throw new Error(`식당 목록 조회 실패: ${error.message}`)
+  }
+
+  return (data ?? []) as Restaurant[]
+}

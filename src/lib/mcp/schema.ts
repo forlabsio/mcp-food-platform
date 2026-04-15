@@ -103,4 +103,57 @@ export const TOOLS: ToolDefinition[] = [
       required: ['order_id'],
     },
   },
+  {
+    name: 'cancel_order',
+    description:
+      '주문을 취소합니다. 본인 확인을 위해 주문 시 사용한 전화번호가 필요합니다. 조리가 시작된 주문은 취소할 수 없습니다.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        order_id: {
+          type: 'string',
+          description: '취소할 주문 ID',
+        },
+        customer_phone: {
+          type: 'string',
+          description: '주문 시 사용한 전화번호 (본인 확인용)',
+        },
+      },
+      required: ['order_id', 'customer_phone'],
+    },
+  },
+  {
+    name: 'list_my_orders',
+    description:
+      '내 주문 내역을 조회합니다. 전화번호로 최근 주문 20건을 확인할 수 있습니다.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        customer_phone: {
+          type: 'string',
+          description: '주문에 사용한 전화번호',
+        },
+        restaurant_id: {
+          type: 'string',
+          description: '특정 식당의 주문만 조회 (선택)',
+        },
+      },
+      required: ['customer_phone'],
+    },
+  },
+  {
+    name: 'list_restaurants',
+    description:
+      '주문 가능한 식당 목록을 조회합니다. 카테고리로 필터링할 수 있습니다.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        category: {
+          type: 'string',
+          description: '카테고리 필터 (예: 중식, 한식, 일식). 생략하면 전체 목록.',
+        },
+      },
+      required: [],
+    },
+  },
 ]

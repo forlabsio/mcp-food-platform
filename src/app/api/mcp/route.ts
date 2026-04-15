@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TOOLS } from '@/lib/mcp/schema'
-import { get_menu, place_order, check_order_status } from '@/lib/mcp/tools'
+import { get_menu, place_order, check_order_status, cancel_order, list_my_orders, list_restaurants } from '@/lib/mcp/tools'
 
 export const runtime = 'edge'
 
@@ -93,6 +93,27 @@ export async function POST(request: NextRequest) {
 
           case 'check_order_status': {
             const result = await check_order_status(toolArgs as unknown as Parameters<typeof check_order_status>[0])
+            return jsonRpcSuccess(id, {
+              content: [{ type: 'text', text: JSON.stringify(result) }],
+            })
+          }
+
+          case 'cancel_order': {
+            const result = await cancel_order(toolArgs as unknown as Parameters<typeof cancel_order>[0])
+            return jsonRpcSuccess(id, {
+              content: [{ type: 'text', text: JSON.stringify(result) }],
+            })
+          }
+
+          case 'list_my_orders': {
+            const result = await list_my_orders(toolArgs as unknown as Parameters<typeof list_my_orders>[0])
+            return jsonRpcSuccess(id, {
+              content: [{ type: 'text', text: JSON.stringify(result) }],
+            })
+          }
+
+          case 'list_restaurants': {
+            const result = await list_restaurants(toolArgs as unknown as Parameters<typeof list_restaurants>[0])
             return jsonRpcSuccess(id, {
               content: [{ type: 'text', text: JSON.stringify(result) }],
             })
