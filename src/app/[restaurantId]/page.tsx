@@ -128,44 +128,61 @@ export default async function RestaurantDetail({
         </div>
 
         <div className="space-y-6">
-          {/* Step 1 */}
+          {/* Step 1: One-line install */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
               <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold">1</span>
-              MCP 서버 연결
+              설치 (한 줄)
             </h3>
             <p className="text-sm text-muted mb-2 ml-7">
-              AI 에이전트 설정에서 아래 MCP 서버 URL을 추가하세요.
+              터미널에서 아래 명령어를 실행하면 Claude Code에 자동으로 추가됩니다.
             </p>
             <pre className="ml-7 rounded-lg bg-foreground text-stone-300 text-xs p-4 overflow-x-auto">
-              <code>{mcpServerUrl}</code>
+              <code>{`claude mcp add --transport http mcp-food-platform ${mcpServerUrl}`}</code>
             </pre>
+            <p className="text-xs text-muted mt-2 ml-7">
+              삭제: <code className="bg-foreground/10 px-1.5 py-0.5 rounded">claude mcp remove mcp-food-platform</code>
+            </p>
           </div>
 
-          {/* Step 2 */}
+          {/* Step 2: Usage */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
               <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold">2</span>
-              skill.json
+              사용법
             </h3>
-            <pre className="ml-7 rounded-lg bg-foreground text-stone-300 text-xs p-4 overflow-x-auto max-h-60">
-              <code>{JSON.stringify(skillJson, null, 2)}</code>
-            </pre>
+            <div className="ml-7 rounded-lg bg-foreground text-stone-300 text-xs p-4 space-y-2">
+              <p className="text-stone-500"># Claude Code에서 자연어로 대화하세요</p>
+              <p>&quot;{restaurant.name} 메뉴 보여줘&quot;</p>
+              <p>&quot;고기만두 2개 주문해줘. 이름 홍길동, 번호 010-1234-5678&quot;</p>
+              <p>&quot;주문 상태 확인해줘&quot;</p>
+            </div>
           </div>
 
-          {/* Step 3 */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold">3</span>
-              SKILL.md
-            </h3>
-            <p className="text-sm text-muted mb-2 ml-7">
-              아래 내용을 SKILL.md 파일로 저장하면 AI 에이전트가 이 식당의 메뉴와 주문 방법을 이해합니다.
+          {/* Step 3: skill.json (접이식) */}
+          <details className="ml-0">
+            <summary className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2 cursor-pointer">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-stone-300 text-foreground text-[10px] font-bold">3</span>
+              skill.json (고급 설정)
+            </summary>
+            <pre className="ml-7 mt-2 rounded-lg bg-foreground text-stone-300 text-xs p-4 overflow-x-auto max-h-60">
+              <code>{JSON.stringify(skillJson, null, 2)}</code>
+            </pre>
+          </details>
+
+          {/* Step 4: SKILL.md (접이식) */}
+          <details className="ml-0">
+            <summary className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2 cursor-pointer">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-stone-300 text-foreground text-[10px] font-bold">4</span>
+              SKILL.md (에이전트 지침서)
+            </summary>
+            <p className="text-sm text-muted mb-2 ml-7 mt-2">
+              AI 에이전트가 이 식당의 메뉴와 주문 방법을 이해하는 지침서입니다.
             </p>
             <pre className="ml-7 rounded-lg bg-foreground text-stone-300 text-xs p-4 overflow-x-auto max-h-72">
               <code>{skillMd}</code>
             </pre>
-          </div>
+          </details>
         </div>
       </div>
     </div>
