@@ -2,7 +2,7 @@
   "mcpServers": {
     "mcp-food-platform": {
       "type": "url",
-      "url": "http://localhost:3003/api/mcp"
+      "url": "https://mcp-food-platform.vercel.app/api/mcp"
     }
   }
 }
